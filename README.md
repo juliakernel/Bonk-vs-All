@@ -124,4 +124,4 @@ Game được thiết kế hoạt động tốt trên:
 - Tablet (768px - 1024px)
 - Mobile (320px - 768px)
 
-Chúc bạn chơi game vui vẻ! 🎉
+Chúc bạn chơi game vui vẻ!!! 🎉
