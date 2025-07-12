@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bonk vs All - Game Chiến Đấu Huyền Thoại",
-  description: "Trò chơi chiến đấu huyền thoại với Bonk - Hãy thử thách kỹ năng của bạn trong các trận đấu epic với các đối thủ mạnh mẽ. Game kết hợp skill click và hold-release combo để tạo nên những trận chiến đầy kịch tính.",
-  keywords: ["bonk", "game", "chiến đấu", "skill click", "combo", "trò chơi", "việt nam"],
+  title: "Bonk vs All - Epic Battle Game",
+  description: "Epic battle game featuring Bonk - Test your skills in legendary fights against powerful opponents. Combines skill click and hold-release combos for intense battles.",
+  keywords: ["bonk", "game", "battle", "skill click", "combo", "fighting game", "web game"],
   authors: [{ name: "Bonk vs All Team" }],
   creator: "Bonk vs All Team",
   publisher: "Bonk vs All",
@@ -26,26 +26,26 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL('https://bonk-vs-all.vercel.app'),
   openGraph: {
-    title: "Bonk vs All - Game Chiến Đấu Huyền Thoại",
-    description: "Trò chơi chiến đấu huyền thoại với Bonk - Thử thách kỹ năng trong các trận đấu epic!",
+    title: "Bonk vs All - Epic Battle Game",
+    description: "Epic battle game featuring Bonk - Test your skills in legendary fights against powerful opponents!",
     url: 'https://bonk-vs-all.vercel.app',
     siteName: 'Bonk vs All',
     images: [
       {
-        url: '/imgs/BONK.png',
+        url: '/imgs/logo.png',
         width: 1200,
         height: 630,
         alt: 'Bonk vs All Game',
       },
     ],
-    locale: 'vi_VN',
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Bonk vs All - Game Chiến Đấu Huyền Thoại",
-    description: "Trò chơi chiến đấu huyền thoại với Bonk - Thử thách kỹ năng trong các trận đấu epic!",
-    images: ['/imgs/BONK.png'],
+    title: "Bonk vs All - Epic Battle Game",
+    description: "Epic battle game featuring Bonk - Test your skills in legendary fights against powerful opponents!",
+    images: ['/imgs/logo.png'],
   },
   robots: {
     index: true,
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: '/favicon.ico',
-    apple: '/imgs/BONK.png',
+    apple: '/imgs/logo.png',
   },
 };
 
@@ -75,7 +75,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
