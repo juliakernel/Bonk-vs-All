@@ -166,15 +166,15 @@ export const GameScreen: React.FC = () => {
     const getBackgroundStyle = () => {
         switch (gameData.gameState) {
             case 'transition-win':
-                return 'bg-gradient-to-br from-emerald-900 via-green-900 to-teal-900';
+                return 'bg-gradient-to-br from-emerald-900/30 via-green-900/30 to-teal-900/30';
             case 'transition-lose':
-                return 'bg-gradient-to-br from-red-900 via-rose-900 to-pink-900';
+                return 'bg-gradient-to-br from-red-900/30 via-rose-900/30 to-pink-900/30';
             case 'win':
-                return 'bg-gradient-to-br from-emerald-900 via-green-900 to-teal-900';
+                return 'bg-gradient-to-br from-emerald-900/30 via-green-900/30 to-teal-900/30';
             case 'lose':
-                return 'bg-gradient-to-br from-red-900 via-rose-900 to-pink-900';
+                return 'bg-gradient-to-br from-red-900/30 via-rose-900/30 to-pink-900/30';
             default:
-                return 'bg-gradient-to-br from-violet-900 via-purple-900 to-fuchsia-900';
+                return 'bg-gradient-to-br from-violet-900/20 via-purple-900/20 to-fuchsia-900/20';
         }
     };
 
@@ -239,7 +239,13 @@ export const GameScreen: React.FC = () => {
 
     return (
         <div className="fixed inset-0 overflow-hidden">
-            {/* Animated background */}
+            {/* Base background image */}
+            <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                style={{ backgroundImage: `url(/imgs/san-dau.png)` }}
+            />
+
+            {/* Animated background overlay */}
             <div className={`absolute inset-0 transition-all duration-2000 ease-in-out ${getBackgroundStyle()}`}>
                 {/* Enemy background image */}
                 {getBackgroundImage() && (
