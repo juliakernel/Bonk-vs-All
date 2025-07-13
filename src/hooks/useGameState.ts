@@ -21,7 +21,7 @@ const getRandomHoldDuration = (): { min: number; max: number; target: number } =
 
 const getRandomTimeLimit = (clickCount: number): number => {
     // Time limit based on click count: 200-400ms per click
-    const timePerClick = Math.floor(Math.random() * 200) + 200; // 200-400ms per click
+    const timePerClick = Math.floor(Math.random() * 100) + 150; // 200-400ms per click
     return clickCount * timePerClick;
 };
 

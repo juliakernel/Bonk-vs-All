@@ -19,9 +19,6 @@ export const HoldReleaseCombo: React.FC<HoldReleaseComboProps> = ({
         ? Math.min(100, (Date.now() - (Date.now() - holdRelease.currentDuration)) / holdRelease.maxDuration * 100)
         : (holdRelease.currentDuration / holdRelease.maxDuration) * 100;
 
-    // Show timer display for first 2 rounds (level 0 and 1)
-    const showTimerDisplay = currentLevel <= 1;
-
     // Real-time timer for display - use a ref to track start time consistently
     const [realtimeHoldDuration, setRealtimeHoldDuration] = useState(0);
     const holdStartTimeRef = useRef<number | null>(null);
