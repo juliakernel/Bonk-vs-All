@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { GameData } from '@/types/game';
 
 interface HoldReleaseComboProps {
@@ -12,12 +12,89 @@ export const HoldReleaseCombo: React.FC<HoldReleaseComboProps> = ({
     onHoldStart,
     onHoldEnd
 }) => {
-    const { holdRelease, comboState } = gameData;
+    const { holdRelease, comboState, currentLevel } = gameData;
     const targetRangeStart = (holdRelease.minDuration / holdRelease.maxDuration) * 100;
     const targetRangeEnd = 100;
     const currentProgress = holdRelease.isHolding
         ? Math.min(100, (Date.now() - (Date.now() - holdRelease.currentDuration)) / holdRelease.maxDuration * 100)
         : (holdRelease.currentDuration / holdRelease.maxDuration) * 100;
+
+    // Show timer display for first 2 rounds (level 0 and 1)
+    const showTimerDisplay = currentLevel <= 1;
+
+    // Real-time timer for display - use a ref to track start time consistently
+    const [realtimeHoldDuration, setRealtimeHoldDuration] = useState(0);
+    const holdStartTimeRef = useRef<number | null>(null);
+
+    // Update real-time timer
+    useEffect(() => {
+        let interval: NodeJS.Timeout | null = null;
+
+        if (holdRelease.isHolding) {
+            // Ensure we have a start time
+            if (!holdStartTimeRef.current) {
+                holdStartTimeRef.current = Date.now();
+            }
+
+            interval = setInterval(() => {
+                if (holdStartTimeRef.current) {
+                    const currentTime = Date.now();
+                    const duration = currentTime - holdStartTimeRef.current;
+                    setRealtimeHoldDuration(duration);
+                }
+            }, 50); // Update every 50ms for better performance
+        } else {
+            // When not holding, show the final duration from game state
+            setRealtimeHoldDuration(holdRelease.currentDuration);
+            holdStartTimeRef.current = null;
+        }
+
+        return () => {
+            if (interval) {
+                clearInterval(interval);
+            }
+        };
+    }, [holdRelease.isHolding, holdRelease.currentDuration]);
+
+    // Reset timer when hold starts - simplified
+    useEffect(() => {
+        if (holdRelease.isHolding) {
+            if (!holdStartTimeRef.current) {
+                holdStartTimeRef.current = Date.now();
+                setRealtimeHoldDuration(0);
+            }
+        } else {
+            holdStartTimeRef.current = null;
+            setRealtimeHoldDuration(holdRelease.currentDuration);
+        }
+    }, [holdRelease.isHolding, holdRelease.currentDuration]);
+
+    // Global mouse/touch event listeners to handle release outside button
+    useEffect(() => {
+        const handleGlobalMouseUp = () => {
+            if (holdRelease.isActive && holdRelease.isHolding) {
+                onHoldEnd();
+            }
+        };
+
+        const handleGlobalTouchEnd = () => {
+            if (holdRelease.isActive && holdRelease.isHolding) {
+                onHoldEnd();
+            }
+        };
+
+        if (holdRelease.isHolding) {
+            document.addEventListener('mouseup', handleGlobalMouseUp);
+            document.addEventListener('touchend', handleGlobalTouchEnd);
+            document.addEventListener('touchcancel', handleGlobalTouchEnd);
+        }
+
+        return () => {
+            document.removeEventListener('mouseup', handleGlobalMouseUp);
+            document.removeEventListener('touchend', handleGlobalTouchEnd);
+            document.removeEventListener('touchcancel', handleGlobalTouchEnd);
+        };
+    }, [holdRelease.isHolding, holdRelease.isActive, onHoldEnd]);
 
     const handleMouseDown = () => {
         if (holdRelease.isActive && !holdRelease.isHolding) {
@@ -26,9 +103,8 @@ export const HoldReleaseCombo: React.FC<HoldReleaseComboProps> = ({
     };
 
     const handleMouseUp = () => {
-        if (holdRelease.isActive && holdRelease.isHolding) {
-            onHoldEnd();
-        }
+        // This will be handled by global event listener
+        // Keep this for consistency but the global listener will handle the actual logic
     };
 
     const handleTouchStart = (e: React.TouchEvent) => {
@@ -38,7 +114,7 @@ export const HoldReleaseCombo: React.FC<HoldReleaseComboProps> = ({
 
     const handleTouchEnd = (e: React.TouchEvent) => {
         e.preventDefault();
-        handleMouseUp();
+        // This will be handled by global event listener
     };
 
     return (
@@ -93,7 +169,7 @@ export const HoldReleaseCombo: React.FC<HoldReleaseComboProps> = ({
                             stroke={holdRelease.isHolding ? "#fbbf24" : "#3b82f6"}
                             strokeWidth="8"
                             strokeDasharray="704"
-                            strokeDashoffset={704 - (currentProgress * 7.04)}
+                            strokeDashoffset={704 - (holdRelease.isHolding ? Math.min(100, (realtimeHoldDuration / holdRelease.maxDuration) * 100) * 7.04 : currentProgress * 7.04)}
                             className="transition-all duration-100 drop-shadow-lg"
                             style={{
                                 filter: holdRelease.isHolding ? 'drop-shadow(0 0 10px #fbbf24)' : undefined
@@ -107,12 +183,16 @@ export const HoldReleaseCombo: React.FC<HoldReleaseComboProps> = ({
                             {holdRelease.isHolding ? 'HOLD!' : 'PRESS'}
                         </div>
                         <div className="text-lg text-white/80">
-                            {holdRelease.currentDuration > 0
-                                ? `${(holdRelease.currentDuration / 1000).toFixed(1)}s`
-                                : holdRelease.isHolding
-                                    ? 'Holding...'
+                            {holdRelease.isHolding
+                                ? `${(realtimeHoldDuration / 1000).toFixed(1)}s`
+                                : holdRelease.currentDuration > 0
+                                    ? `${(holdRelease.currentDuration / 1000).toFixed(1)}s`
                                     : 'Ready'
                             }
+                        </div>
+                        {/* Debug info */}
+                        <div className="text-xs text-white/50 mt-1">
+                            RT: {realtimeHoldDuration}ms | State: {holdRelease.isHolding ? 'HOLDING' : 'NOT_HOLDING'}
                         </div>
                     </div>
                 </div>

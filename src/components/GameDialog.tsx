@@ -13,19 +13,21 @@ export const GameDialog: React.FC<GameDialogProps> = ({
     onAction,
     actionText
 }) => {
-    const isWin = title.includes('CHIẾN THẮNG');
+    const isWin = title.includes('VICTORY');
 
     return (
         <div className="p-8 text-center">
             {/* Dialog content */}
             <div className="relative z-10 max-w-2xl mx-auto">
-                {/* Icon */}
+                {/* Image instead of icon */}
                 <div className="mb-8">
-                    {isWin ? (
-                        <div className="text-8xl md:text-9xl animate-bounce">🏆</div>
-                    ) : (
-                        <div className="text-8xl md:text-9xl animate-bounce">💥</div>
-                    )}
+                    <div className="w-48 h-48 md:w-64 md:h-64 mx-auto rounded-2xl overflow-hidden shadow-2xl animate-bounce">
+                        <img
+                            src={isWin ? '/imgs/victory-bg.png' : '/imgs/defeat-bg.png'}
+                            alt={isWin ? 'Victory' : 'Defeat'}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
                 </div>
 
                 {/* Title */}

@@ -10,7 +10,7 @@ const getRandomClickCount = (): number => {
 const getRandomHoldDuration = (): { min: number; max: number; target: number } => {
     // Random base duration between 1.5-3.5 seconds
     const baseDuration = Math.floor(Math.random() * 2000) + 1500; // 1500-3500ms
-    const tolerance = 500; // ±500ms tolerance
+    const tolerance = 100; // ±150ms tolerance (0.3 seconds total window)
 
     return {
         min: baseDuration - tolerance,
