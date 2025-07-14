@@ -64,7 +64,13 @@ const createInitialGameData = (): GameData => {
             isHolding: false,
             isActive: false
         },
-        isPlayerTurn: true
+        isPlayerTurn: true,
+        // Add game timer
+        gameTimer: {
+            startTime: null,
+            currentTime: 0,
+            isRunning: false
+        }
     };
 };
 
@@ -73,17 +79,62 @@ export const useGameState = () => {
     const skillClickTimerRef = useRef<NodeJS.Timeout | null>(null);
     const holdStartTimeRef = useRef<number | null>(null);
     const restPeriodTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     // Start new game
     const startGame = useCallback(() => {
-        setGameData(createInitialGameData());
-        setGameData(prev => ({ ...prev, gameState: 'playing' }));
+        const newGameData = createInitialGameData();
+        const startTime = Date.now();
+
+        setGameData({
+            ...newGameData,
+            gameState: 'playing',
+            gameTimer: {
+                startTime: startTime,
+                currentTime: 0,
+                isRunning: true
+            }
+        });
     }, []);
 
     // Reset game
     const resetGame = useCallback(() => {
         setGameData(createInitialGameData());
     }, []);
+
+    // Update game timer
+    useEffect(() => {
+        if (gameData.gameTimer.isRunning && gameData.gameTimer.startTime) {
+            gameTimerRef.current = setInterval(() => {
+                setGameData(prev => {
+                    if (!prev.gameTimer.isRunning || !prev.gameTimer.startTime) {
+                        return prev;
+                    }
+
+                    const currentTime = Math.floor((Date.now() - prev.gameTimer.startTime) / 1000);
+                    return {
+                        ...prev,
+                        gameTimer: {
+                            ...prev.gameTimer,
+                            currentTime
+                        }
+                    };
+                });
+            }, 1000); // Update every second
+        } else {
+            if (gameTimerRef.current) {
+                clearInterval(gameTimerRef.current);
+                gameTimerRef.current = null;
+            }
+        }
+
+        return () => {
+            if (gameTimerRef.current) {
+                clearInterval(gameTimerRef.current);
+                gameTimerRef.current = null;
+            }
+        };
+    }, [gameData.gameTimer.isRunning, gameData.gameTimer.startTime]);
 
     // Start skill click combo
     const startSkillClick = useCallback(() => {
@@ -422,6 +473,15 @@ export const useGameState = () => {
     // Handle transition delays for win/lose states
     useEffect(() => {
         if (gameData.gameState === 'transition-win') {
+            // Stop timer when transitioning to win
+            setGameData(prev => ({
+                ...prev,
+                gameTimer: {
+                    ...prev.gameTimer,
+                    isRunning: false
+                }
+            }));
+
             const timer = setTimeout(() => {
                 setGameData(prev => ({ ...prev, gameState: 'win' }));
             }, 2000); // 2 second delay to show background transition
@@ -432,6 +492,15 @@ export const useGameState = () => {
 
     useEffect(() => {
         if (gameData.gameState === 'transition-lose') {
+            // Stop timer when losing
+            setGameData(prev => ({
+                ...prev,
+                gameTimer: {
+                    ...prev.gameTimer,
+                    isRunning: false
+                }
+            }));
+
             const timer = setTimeout(() => {
                 setGameData(prev => ({ ...prev, gameState: 'lose' }));
             }, 2000); // 2 second delay to show background transition

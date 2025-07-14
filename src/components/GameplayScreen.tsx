@@ -1,7 +1,7 @@
 import React from 'react';
 import { GameData } from '@/types/game';
-import { HeartDisplay } from './HeartDisplay';
 import { HealthBar } from './HealthBar';
+import { GameTimer } from './GameTimer';
 
 interface GameplayScreenProps {
     gameData: GameData;
@@ -12,7 +12,10 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
     gameData,
     onStartAttack
 }) => {
-    const { bonk, currentEnemy, currentLevel, gameState, comboState } = gameData;
+    const { bonk, currentEnemy, currentLevel, gameState, comboState, gameTimer } = gameData;
+
+    // Check if attack button should be disabled
+    const isAttackDisabled = gameState !== 'playing' || comboState !== 'idle';
 
     // Determine which background image to show based on game state
     const getBackgroundImage = () => {
@@ -63,12 +66,15 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
                             color="blue"
                         />
 
-                        {/* Level indicator */}
-                        <div className="relative">
+                        {/* Level indicator and Timer */}
+                        <div className="relative flex flex-col items-center gap-4">
                             <div className="bg-gradient-to-r from-white/25 to-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-xl">
                                 <div className="text-white text-xl font-bold">ROUND {currentLevel + 1}/5</div>
                                 <div className="text-white/80 text-sm">{currentEnemy.name}</div>
                             </div>
+
+                            {/* Game Timer */}
+                            <GameTimer gameTimer={gameTimer} />
                         </div>
 
                         {/* Enemy Health Bar */}
@@ -92,22 +98,28 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
                             </div>
 
                             {/* Attack button */}
-                            <button
-                                onClick={onStartAttack}
-                                className="cursor-pointer group relative px-8 py-4 text-xl md:text-2xl font-bold text-white rounded-xl overflow-hidden transition-all duration-300 hover:scale-105"
-                            >
-                                {/* Button background */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-red-600 rounded-xl transition-all duration-300 group-hover:from-red-400 group-hover:via-orange-400 group-hover:to-red-500" />
+                            {!isAttackDisabled ? (
+                                <button
+                                    onClick={onStartAttack}
+                                    className="cursor-pointer group relative px-8 py-4 text-xl md:text-2xl font-bold text-white rounded-xl overflow-hidden transition-all duration-300 hover:scale-105"
+                                >
+                                    {/* Button background */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-red-600 rounded-xl transition-all duration-300 group-hover:from-red-400 group-hover:via-orange-400 group-hover:to-red-500" />
 
-                                {/* Button border */}
-                                <div className="absolute inset-0 rounded-xl border-2 border-white/30" />
+                                    {/* Button border */}
+                                    <div className="absolute inset-0 rounded-xl border-2 border-white/30" />
 
-                                {/* Button shine */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-transparent rounded-xl" />
+                                    {/* Button shine */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-transparent rounded-xl" />
 
-                                {/* Button text */}
-                                <span className="relative z-10">⚔️ ATTACK!</span>
-                            </button>
+                                    {/* Button text */}
+                                    <span className="relative z-10">⚔️ ATTACK!</span>
+                                </button>
+                            ) : (
+                                <div>
+
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

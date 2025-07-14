@@ -32,7 +32,7 @@ export const useAudio = () => {
             if (!audioRefs.current[key]) {
                 const audio = new Audio(src);
                 audio.preload = 'auto';
-                audio.volume = key === 'bgMusic' ? 0.3 : 0.7;
+                audio.volume = key === 'bgMusic' ? 0.15 : 1;
 
                 if (key === 'bgMusic') {
                     audio.loop = true;

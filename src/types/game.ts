@@ -47,6 +47,13 @@ export interface GameData {
     skillClick: SkillClickData;
     holdRelease: HoldReleaseData;
     isPlayerTurn: boolean;
+    gameTimer: GameTimer;
+}
+
+export interface GameTimer {
+    startTime: number | null;
+    currentTime: number;
+    isRunning: boolean;
 }
 
 export const ENEMIES: Enemy[] = [

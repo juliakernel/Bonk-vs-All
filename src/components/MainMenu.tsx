@@ -1,10 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Leaderboard } from './Leaderboard';
 
 interface MainMenuProps {
     onStartGame: () => void;
 }
 
 export const MainMenu: React.FC<MainMenuProps> = ({ onStartGame }) => {
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
+
+    if (showLeaderboard) {
+        return (
+            <div className="h-full flex flex-col">
+                {/* Back button */}
+                <div className="p-6">
+                    <button
+                        onClick={() => setShowLeaderboard(false)}
+                        className="cursor-pointer flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+                    >
+                        ← Back to Menu
+                    </button>
+                </div>
+
+                {/* Leaderboard */}
+                <div className="flex-1 px-6 pb-6 overflow-auto">
+                    <Leaderboard />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="h-full flex flex-col items-center justify-center relative">
             {/* Main content card */}
@@ -29,7 +53,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onStartGame }) => {
                         </div>
 
                         {/* Enemy list */}
-                        <div className="mb-10">
+                        <div className="mb-8">
                             <h3 className="text-lg text-white/80 mb-4">Your Opponents:</h3>
                             <div className="flex flex-wrap justify-center gap-3">
                                 {['Jup Studio', 'LaunchLab', 'Moonshot', 'Believe', 'Pumpfun'].map((enemy, index) => (
@@ -42,8 +66,8 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onStartGame }) => {
                             </div>
                         </div>
 
-                        {/* Start button */}
-                        <div className="mb-6">
+                        {/* Action buttons */}
+                        <div className="mb-8 flex flex-col gap-4">
                             <button
                                 onClick={onStartGame}
                                 className="cursor-pointer group relative px-12 py-4 text-2xl md:text-3xl font-bold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105"
@@ -59,6 +83,24 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onStartGame }) => {
 
                                 {/* Button text */}
                                 <span className="relative z-10">🎮 START GAME</span>
+                            </button>
+
+                            {/* Leaderboard button */}
+                            <button
+                                onClick={() => setShowLeaderboard(true)}
+                                className="cursor-pointer group relative px-8 py-3 text-lg md:text-xl font-bold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105"
+                            >
+                                {/* Button background */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-300 group-hover:from-blue-400 group-hover:via-purple-400 group-hover:to-indigo-400" />
+
+                                {/* Button border */}
+                                <div className="absolute inset-0 rounded-full border-2 border-white/30" />
+
+                                {/* Button shine */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-transparent rounded-full" />
+
+                                {/* Button text */}
+                                <span className="relative z-10">🏆 LEADERBOARD</span>
                             </button>
                         </div>
 

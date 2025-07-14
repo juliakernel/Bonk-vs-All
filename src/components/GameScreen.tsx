@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGameState } from '@/hooks/useGameState';
 import { useAudio } from '@/hooks/useAudio';
 import { GlassDialog } from './GlassDialog';
@@ -10,6 +10,7 @@ import { SkillClickCombo } from './SkillClickCombo';
 import { HoldReleaseCombo } from './HoldReleaseCombo';
 import { GameDialog } from './GameDialog';
 import { LevelCompleteScreen } from './LevelCompleteScreen';
+import { VictoryForm } from './VictoryForm';
 
 export const GameScreen: React.FC = () => {
     const {
@@ -25,11 +26,21 @@ export const GameScreen: React.FC = () => {
     } = useGameState();
 
     const { initializeAudio, playSound, playBgMusic, stopBgMusic } = useAudio();
+    const [showVictoryForm, setShowVictoryForm] = useState(false);
 
     // Initialize audio when component mounts
     useEffect(() => {
         initializeAudio();
     }, [initializeAudio]);
+
+    // Handle victory state to show form
+    useEffect(() => {
+        if (gameData.gameState === 'win') {
+            setShowVictoryForm(true);
+        } else {
+            setShowVictoryForm(false);
+        }
+    }, [gameData.gameState]);
 
     // Handle game state changes for audio
     useEffect(() => {
@@ -315,12 +326,20 @@ export const GameScreen: React.FC = () => {
                     size="medium"
                     backdrop="blur"
                 >
-                    <GameDialog
-                        title="VICTORY!"
-                        message="Bonk has defeated all opponents!"
-                        onAction={resetGame}
-                        actionText="Play Again"
-                    />
+                    {showVictoryForm ? (
+                        <VictoryForm
+                            completionTime={gameData.gameTimer.currentTime}
+                            onSubmitSuccess={resetGame}
+                            onCancel={resetGame}
+                        />
+                    ) : (
+                        <GameDialog
+                            title="VICTORY!"
+                            message="Bonk has defeated all opponents!"
+                            onAction={resetGame}
+                            actionText="Play Again"
+                        />
+                    )}
                 </GlassDialog>
 
                 <GlassDialog
